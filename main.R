@@ -1,7 +1,6 @@
 library(sf)
 library(terra)
 library(dplyr)
-library(ranger)
 
 esus <- vect("data/esus.gpkg")
 
@@ -29,8 +28,8 @@ valid_df <- reg_df[(trainIndex):nrow(reg_df) + 1,]
 train_df <- train_df[,c("ndvi", "evi", "weight_wet")]
 valid_df <- valid_df[,c("ndvi", "evi", "weight_wet")]
 
-fit_ndvi <- svm(formula = weight_wet ~ ndvi, data = train_df)
-fit_evi <- svm(formula = weight_wet ~ evi, data = train_df)
+fit_ndvi <- lm(formula = weight_wet ~ ndvi, data = train_df)
+fit_evi <- lm(formula = weight_wet ~ evi, data = train_df)
 
 preds_ndvi <- predict(fit_ndvi, valid_df)
 preds_evi <- predict(fit_evi, valid_df)
