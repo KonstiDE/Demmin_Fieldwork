@@ -30,15 +30,15 @@ reg_df$weight_wet <- reg_df$weight_wet - reg_df$weight_bowl
 reg_df$evi <- (2.5 * (reg_df$B8 - reg_df$B4)) / (reg_df$B8 + (2.4 * reg_df$B4) + 10000)
 reg_df$ndvi <- ((reg_df$B8 - reg_df$B4) / (reg_df$B8 + reg_df$B4))
 
-trainIndex <- nrow(reg_df) * 0.7
+trainIndex <- nrow(reg_df) * 0.8
 train_df <- reg_df[0:trainIndex,]
 valid_df <- reg_df[(trainIndex):nrow(reg_df) + 1,]
 
 train_df <- train_df[,c("ndvi", "evi", "weight_wet")]
 valid_df <- valid_df[,c("ndvi", "evi", "weight_wet")]
 
-fit_ndvi <- lm(formula = weight_wet ~ ndvi, data = train_df)
-fit_evi <- lm(formula = weight_wet ~ evi, data = train_df)
+fit_ndvi <- svm(formula = weight_wet ~ ndvi, data = train_df)
+fit_evi <- svm(formula = weight_wet ~ evi, data = train_df)
 
 preds_ndvi <- predict(fit_ndvi, valid_df)
 preds_evi <- predict(fit_evi, valid_df)
