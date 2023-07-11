@@ -134,6 +134,8 @@ ggplot(df_long, aes(x = as.factor(x), y = value, fill = name)) +
   coord_flip()
 ```
 
+![Predicition Validation](qgis/validation_preds.png)
+
 We now want to predict with our model the whole to field **F1** and **F2**. To do so, we extract all pixels from the
 sentinel file (which was cropped earlier to the field shapes) and calculate ***NDVI*** and ***EVI*** indices for it.
 With these, predicting the AGB following the same scheme as we used at the validation dataframe.
