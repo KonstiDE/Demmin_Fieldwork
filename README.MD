@@ -3,12 +3,12 @@
 Welcome to the Demmin project. This fieldwork took place from 29th May to 3rd July in 2023 in two fields near the small 
 village of Schmarsow located in north-eastern part of Western-Pomerania, Germany.  In this time, the fields were covered
 with Winterwheat, planted in the autumn (usually September / October) of the previous year that will be harvested around
-Juna or July. With this, the winter wheat we looked at, was already in a pretty advanced stage of growing. \
-In those two fields, in total 78 GPS points were marked for measuring the stage of growing, height, density and seeding
-angle of the plants as well as to collect samples and measuring the Above Ground Biomass (AGB).
+June or July. With this, the winter wheat we looked at, was already in a pretty advanced stage of growing. \
+In those two fields, in total 78 GPS points were marked for measuring the stage of growing, height, density, and seeding
+angle of the plants as well as to collect samples and measure the Above Ground Biomass (AGB).
 
 ### Course project definition
-This Git is dedicated to build up a linear model to estimate AGB of winter wheat in Western-Pomerania using additional
+This Git is dedicated to building up a linear model to estimate AGB of winter wheat in Western Pomerania using additional
 Sentinel-2 data, as for Landsat, there is no imagery of high enough quality for the period of the fieldwork.
 
 ### Study Area
@@ -24,9 +24,9 @@ is unavailable, we use all pixels for Sentinel data.
 
 ### Measurements
 For the ground truth selection of the AGB, at each point, samples were harvested and weighted back in a laboratory using a
-scale. Furthermore, the samples were put into a dry oven for 24 hours to acquire their dry weight. Also weights of the 
+scale. Furthermore, the samples were put into a dry oven for 24 hours to acquire their dry weight. Also, weights of the 
 bowl used for weighing were taken which will be subtracted from the weights afterward, receiving the pure AGB and Dryed
-Biomass. For each point we sampled, the unique identifier consist of the **field name**, the **ESU** and the **SSU**
+Biomass. For each point we sampled, the unique identifier consists of the **field name**, the **ESU**, and the **SSU**
 together.
 \
 ### Sentinel-2 Data
@@ -35,7 +35,7 @@ fieldwork. The scene(s) (Landsat excluded in this analysis) were harvested via t
 [here](https://code.earthengine.google.com/ea8954cb78b05868eca1926ac2fd3bdc?noload=true).
 
 ### Script and Workflow
-We start of by loading the data acquired by GEE and the fieldwork itself, and plot a map with shortly the fields and
+We start off by loading the data acquired by GEE and the fieldwork itself, and plot a map with shortly the fields and
 ESUS relevant for us. This way, we get a nice short overview of the dimensions we are dealing with, yielding also the
 following plot:
 
@@ -55,8 +55,8 @@ ggplot() +
 ```
 ![Fields](qgis/fields.png)
 
-In the next step we process the sentinel input for the sentinel file for the SSU inputs as they state the input values
-for our linear regression model later on. Firstly, to get a unique identifier for every SSU we combine the 
+In the next step, we process the sentinel input for the sentinel file for the SSU inputs as they later state the input values
+for our linear regression model. Firstly, to get a unique identifier for every SSU we combine the 
 **field name**, the **ESU**, and the **SSU** id with the `paste0()` command of R base. Secondly, we make sure the
 weight arguments are numeric, not factorial for the regression. Finally, we conduct a `data.frame` named `reg_df` with 
 the extracted sentinel values for these locations and combine it with our ground truth weight values from the `gt` csv
@@ -82,12 +82,12 @@ reg_df$ndvi <- ((reg_df$B8 - reg_df$B4) / (reg_df$B8 + reg_df$B4))
 reg_df <- reg_df[sample(1:nrow(reg_df)), ]
 ```
 
-With this setup we are ready to fit a model. For our example, a simple linear model `lm()` worked best, while 
-surprisingly Support Vector Machines (SVMs) oder Random Forests (RFs) failed. In the subsequent code snippet we split
-our data into training and testing data with a commonly used ratio on 80/20. After selecting only important columns to
+With this setup, we are ready to fit a model. For our example, a simple linear model `lm()` worked best, while 
+surprisingly Support Vector Machines (SVMs) or Random Forests (RFs) failed. In the subsequent code snippet, we split
+our data into training and testing data with a commonly used ratio of 80/20. After selecting only important columns to
 minimize access times of the program, we fit a linear model using the base R `lm()` function, validating it directly
 after. Lastly, we calculate the Mean Absolute Error (MAE) of both the NDVI and EVI variables as predictors. However,
-since we have not much data, they vary alot over which samples we used for training and which for testing as this might
+since we do have not much data, they vary a lot over which samples we used for training and which for testing as this might
 change with multiple runs, since we shuffle `reg_df`:
 
 ```r
@@ -136,9 +136,9 @@ ggplot(df_long, aes(x = as.factor(x), y = value, fill = name)) +
 
 ![Predicition Validation](qgis/validation_preds.png)
 
-We now want to predict with our model the whole to field **F1** and **F2**. To do so, we extract all pixels from the
+We now want to predict the whole field **F1** and **F2** with our model. To do so, we extract all pixels from the
 sentinel file (which was cropped earlier to the field shapes) and calculate ***NDVI*** and ***EVI*** indices for it.
-With these, predicting the AGB following the same scheme as we used at the validation dataframe.
+With these, predicting the AGB following the same scheme as we used in the validation data frame.
 
 ```r
 sen2pixels <- extract(sentinel2_fields, seq_along(0:length(values(sentinel2_fields))))
