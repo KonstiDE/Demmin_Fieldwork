@@ -110,8 +110,8 @@ mean_evi <- mean(valid_df$weight_wet - preds_evi)
 
 Nonetheless, we want to visualize the MAE a bit more. For this purpose, we compose a data frame `long_df` where we store
 the values of the AGB prediction of NDVI and EVI respectively, as well as the true AGB from our validation data frame.
-Below the code, we present a ggplot featuring the true AGB (<span style="color:#017825">▮</span>), EVIs prediction 
-(<span style="color:#0073C2">▮</span>), and NDVIs prediction (<span style="color:salmon">▮</span>).
+Below the code, we present a ggplot featuring the true AGB (![#017825](https://placehold.co/15x15/f03c15/f03c15.png) `#017825`), EVIs prediction 
+(![#0073C2](https://placehold.co/15x15/f03c15/f03c15.png) `#0073C2`), and NDVIs prediction (![#FA8072](https://placehold.co/15x15/f03c15/f03c15.png) `#FA8072`).
 
 ```r
 preds_ndvi <- as.numeric(preds_ndvi)
