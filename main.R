@@ -6,7 +6,6 @@ library(basemaps)
 library(ggplot2)
 library(ggspatial)
 library(ggthemes)
-library(e1071)
 library(ggpubr)
 
 esus <- st_read("data/esus.gpkg")
@@ -18,8 +17,10 @@ sentinel2_fields <- mask(sentinel2, fields)
 gt <- read.csv("data/demmin_gt.csv")
 
 ggplot() +
-  layer_spatial(data = sentinel2_fields) +
-  geom_sf(data = esus)
+  layer_spatial(sentinel2) +
+  geom_sf(data = fields) +
+  geom_sf(data = esus) +
+  theme_void()
 
 
 gt$short <- paste0(gt$field, gt$esu, gt$ssu)
@@ -51,6 +52,9 @@ fit_evi <- lm(formula = weight_wet ~ evi, data = train_df)
 preds_ndvi <- predict(fit_ndvi, valid_df)
 preds_evi <- predict(fit_evi, valid_df)
 
+mean_ndvi <- mean(valid_df$weight_wet - preds_ndvi)
+mean_evi <- mean(valid_df$weight_wet - preds_evi)
+
 preds_ndvi <- as.numeric(preds_ndvi)
 preds_evi <- as.numeric(preds_evi)
 preds_df <- data.frame(x = seq_along(preds_ndvi), y_ndvi = preds_ndvi, weight_wet = valid_df$weight_wet, y_evi = preds_evi)
@@ -63,15 +67,12 @@ ggplot(df_long, aes(x = as.factor(x), y = value, fill = name)) +
   xlab("SSUS") +
   ylab("AGB in g / 5 stems") +
   scale_fill_manual(
-    values = c("#0073C2", "#017825", "salmon"),
+    values = c("salmon", "#017825", "#0073C2"),
     labels = c("Est. NDVI", "True AGB", "Est. EVI"),
     guide_colorbar(title = "")
   ) +
   scale_x_discrete(breaks = seq_along(valid_df$short), labels = valid_df$short) +
   coord_flip()
-
-med_ndvi <- mean(valid_df$weight_wet - preds_ndvi)
-med_evi <- mean(valid_df$weight_wet - preds_evi)
 
 
 sen2pixels <- extract(sentinel2_fields, seq_along(0:length(values(sentinel2_fields))))
@@ -85,7 +86,7 @@ sentinel2_pred_ndvi <- sentinel2_fields[[1]]
 sentinel2_pred_ndvi[!is.na(sentinel2_pred_ndvi)] <- as.numeric(preds_fields_ndvi)[!is.na(preds_fields_ndvi)]
 sentinel2_pred_ndvi[sentinel2_pred_ndvi < 0] <- 0
 
-plot_ndvi <- ggplot() +
+ggplot() +
   layer_spatial(data = sentinel2_pred_ndvi) +
   scale_fill_gradientn(
     colors = c("black", "green"),
@@ -103,7 +104,7 @@ sentinel2_pred_evi[!is.na(sentinel2_pred_evi)] <- as.numeric(preds_fields_evi)[!
 sentinel2_pred_evi[sentinel2_pred_evi < 0] <- 0
 
 
-plot_evi <- ggplot() +
+ggplot() +
   layer_spatial(data = sentinel2_pred_evi) +
   scale_fill_gradientn(
     colors = c("black", "green"),
@@ -112,15 +113,12 @@ plot_evi <- ggplot() +
   ) +
   xlab("Above Ground Biomass (Wet) in gram per 5 stems")
 
-# Plot together
-ggarrange(
-  plot_ndvi, plot_evi,
-  labels = c("NDVI", "EVI")
-)
-
 # Plot difference
-diff <- abs(sentinel2_pred_ndvi - sentinel2_pred_evi)
-plot(diff)
+diff <- sentinel2_pred_ndvi - sentinel2_pred_evi
+
+ggplot() +
+  layer_spatial(data = diff) +
+  scale_fill_gradientn(colors = c("blue", "white", "red"), na.value = "transparent")
 
 
 
