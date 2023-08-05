@@ -1,6 +1,6 @@
 # Demmin Fieldwork
 
-Welcome to the Demmin project. This fieldwork took place from 29th May to 3rd July in 2023 in two fields near the small 
+Welcome to the Demmin project. This fieldwork took place from 29th May to 3rd June in 2023 in two fields near the small 
 village of Schmarsow located in north-eastern part of Western-Pomerania, Germany.  In this time, the fields were covered
 with Winterwheat, planted in the autumn (usually September / October) of the previous year that will be harvested around
 June or July. With this, the winter wheat we looked at, was already in a pretty advanced stage of growing. \
